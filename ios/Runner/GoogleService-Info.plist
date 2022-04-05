@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>784395573848-095fcbks41pursvblq12i5f4boc3etnu.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.784395573848-095fcbks41pursvblq12i5f4boc3etnu</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAiu15dnx2UmT1hEZ8k0udN7lIIRINMDDw</string>
+	<key>GCM_SENDER_ID</key>
+	<string>784395573848</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.parklock.runnerapp</string>
+	<key>PROJECT_ID</key>
+	<string>park-lock-app-backend</string>
+	<key>STORAGE_BUCKET</key>
+	<string>park-lock-app-backend.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:784395573848:ios:43697f3aa662e5ed2d082d</string>
+</dict>
+</plist>

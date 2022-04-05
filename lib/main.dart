@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'src/locations.dart' as locations;
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -48,24 +56,23 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late GoogleMapController mapController;
+  final Map<String, Marker> _markers = {};
 
-  final LatLng _center = const LatLng(45.521563, -122.677433);
-
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
-
-  int _counter = 0;
-
-  void _incrementCounter() {
+  Future<void> _onMapCreated(GoogleMapController controller) async {
+    final lockers = await locations.getLockers();
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      _markers.clear();
+      for (final locker in lockers.lockers) {
+        final marker = Marker(
+          markerId: MarkerId(locker.name),
+          position: LatLng(locker.lat, locker.lng),
+          infoWindow: InfoWindow(
+            title: locker.name,
+            snippet: locker.address,
+          ),
+        );
+        _markers[locker.name] = marker;
+      }
     });
   }
 
@@ -114,9 +121,10 @@ class _MyHomePageState extends State<MyHomePage> {
       body: GoogleMap(
         onMapCreated: _onMapCreated,
         initialCameraPosition: CameraPosition(
-          target: _center,
+          target: LatLng(51.5, -0.12),
           zoom: 11.0,
         ),
+        markers: _markers.values.toSet(),
       ),
     );
   }
