@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'src/locations.dart' as locations;
@@ -94,9 +93,11 @@ class _MyHomePageState extends State<MyHomePage> {
       drawer: Drawer(
         child: ListView(
           children: <Widget>[
-            DrawerHeader(
-              child: Text('Username'),
-            ),
+            const SizedBox(
+                height: 50.0,
+                child: DrawerHeader(
+                  child: Text('Username'),
+                )),
             ListTile(
               title: Text('Account Details'),
               onTap: () {
@@ -118,14 +119,53 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      body: GoogleMap(
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: CameraPosition(
-          target: LatLng(51.5, -0.12),
-          zoom: 11.0,
-        ),
-        markers: _markers.values.toSet(),
+      body: Column(
+        children: [
+          SizedBox(
+              width: 400,
+              height: 200,
+              child: GoogleMap(
+                onMapCreated: _onMapCreated,
+                initialCameraPosition: const CameraPosition(
+                  target: LatLng(51.5468, -0.10421),
+                  zoom: 11.0,
+                ),
+                markers: _markers.values.toSet(),
+              )),
+          const SizedBox(width: 400, height: 190, child: lockerTabs()),
+        ],
       ),
     );
+  }
+}
+
+class lockerTabs extends StatelessWidget {
+  const lockerTabs({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            toolbarHeight: 0,
+            bottom: const TabBar(
+              tabs: [
+                Tab(text: "Nearby"),
+                Tab(text: "Recent"),
+                Tab(text: "Favourites"),
+              ],
+            ),
+          ),
+          body: const TabBarView(
+            children: [
+              Center(child: Text('Nearby')),
+              Center(child: Text('Recent')),
+              Center(child: Text('Favourites')),
+            ],
+          ),
+        ));
   }
 }
