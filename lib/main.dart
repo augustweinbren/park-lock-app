@@ -78,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
+    // by the _onMapCreated method above.
     //
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
@@ -91,6 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       drawer: Drawer(
+        // This is the main drawer, used to hold user details
         child: ListView(
           children: <Widget>[
             const SizedBox(
@@ -120,6 +121,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       body: Column(
+        // holds the map and the list of lockers
+        // TODO: make boxes dynamically adjustable to fit the screen
         children: [
           SizedBox(
               width: 400,
@@ -132,15 +135,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 markers: _markers.values.toSet(),
               )),
-          const SizedBox(width: 400, height: 190, child: lockerTabs()),
+          const SizedBox(width: 400, height: 190, child: LockerTabs()),
         ],
       ),
     );
   }
 }
 
-class lockerTabs extends StatelessWidget {
-  const lockerTabs({
+class LockerTabs extends StatelessWidget {
+  const LockerTabs({
     Key? key,
   }) : super(key: key);
 
