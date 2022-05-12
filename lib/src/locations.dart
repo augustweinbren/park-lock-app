@@ -47,6 +47,8 @@ class Locker {
     required this.lat,
     required this.lng,
     required this.name,
+    required this.capacity,
+    required this.occupancy,
     required this.region,
   });
 
@@ -59,6 +61,8 @@ class Locker {
   final double lat;
   final double lng;
   final String name;
+  final String capacity;
+  final String occupancy;
   final String region;
 }
 
