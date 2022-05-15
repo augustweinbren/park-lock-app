@@ -61,8 +61,8 @@ class Locker {
   final double lat;
   final double lng;
   final String name;
-  final String capacity;
-  final String occupancy;
+  final int capacity;
+  final int occupancy;
   final String region;
 }
 

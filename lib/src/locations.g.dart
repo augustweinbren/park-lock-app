@@ -37,8 +37,8 @@ Locker _$LockerFromJson(Map<String, dynamic> json) => Locker(
       lat: (json['lat'] as num).toDouble(),
       lng: (json['lng'] as num).toDouble(),
       name: json['name'] as String,
-      capacity: json['capacity'] as String,
-      occupancy: json['occupancy'] as String,
+      capacity: json['capacity'] as int,
+      occupancy: json['occupancy'] as int,
       region: json['region'] as String,
     );
 
