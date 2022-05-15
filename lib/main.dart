@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'src/locations.dart' as locations;
+import 'src/user.dart' as user_data;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -56,7 +57,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final Map<String, Marker> _markers = {};
-
+  /* final List<user_data.User> _users = [];*/
+  // List of users for making data input easier. Only one user is needed for now.
+/* \todo: Figure out how to incorporate user code
+  final user_data.User _userData = user_data.User();
+  final user = await user_data.getUser();
+*/
   Future<void> _onMapCreated(GoogleMapController controller) async {
     final lockers = await locations.getLockers();
     setState(() {
@@ -74,6 +80,8 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     });
   }
+
+  // Future<void> _onUserDataAccessed()
 
   @override
   Widget build(BuildContext context) {
