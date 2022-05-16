@@ -57,6 +57,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final Map<String, Marker> _markers = {};
+  final List<locations.Locations> lockersEncapsulated = [];
+  bool dataLoaded = false;
   /* final List<user_data.User> _users = [];*/
   // List of users for making data input easier. Only one user is needed for now.
 /* \todo: Figure out how to incorporate user code
@@ -66,22 +68,36 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _onMapCreated(GoogleMapController controller) async {
     final lockers = await locations.getLockers();
     setState(() {
+      lockersEncapsulated.clear();
+      lockersEncapsulated.add(lockers);
       _markers.clear();
       for (final locker in lockers.lockers) {
+        int availability = locker.capacity - locker.occupancy;
         final marker = Marker(
           markerId: MarkerId(locker.name),
           position: LatLng(locker.lat, locker.lng),
           infoWindow: InfoWindow(
             title: locker.name,
-            snippet: locker.address,
+            snippet: locker.address +
+                '\n' +
+                'Locker Availability: ' +
+                availability.toString() +
+                '/' +
+                locker.capacity.toString(),
           ),
         );
-        _markers[locker.name] = marker;
+        _markers[locker.id] = marker;
       }
+      dataLoaded = true;
     });
   }
 
-  // Future<void> _onUserDataAccessed()
+  Future<locations.Locations> _getLockerData() async {
+    while (!dataLoaded) {
+      await Future.delayed(Duration(milliseconds: 100));
+    }
+    return lockersEncapsulated[0];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,17 +159,48 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 markers: _markers.values.toSet(),
               )),
-          const SizedBox(width: 400, height: 190, child: LockerTabs()),
+          SizedBox(
+              width: 400,
+              height: 190,
+              child: LockerTabs(
+                lockerDataGetter: _getLockerData,
+              )),
         ],
       ),
     );
   }
 }
 
-class LockerTabs extends StatelessWidget {
+// class LockerTabs extends StatelessWidget {
+//   const LockerTabs({Key? key, required this.loadingIndicator, required this.lockerData}) : super(key: key);
+
+//   final void Function() loadingIndicator;
+//   final List<locations.Locations> lockerData;
+
+//   @override
+//   _LockerTabsState createState() => _LockerTabsState();
+// }
+
+class LockerTabs extends StatefulWidget {
   const LockerTabs({
     Key? key,
+    required this.lockerDataGetter,
   }) : super(key: key);
+
+  final Function lockerDataGetter;
+
+  @override
+  State<StatefulWidget> createState() => _LockerTabsState();
+}
+
+class _LockerTabsState extends State<LockerTabs> {
+  late Future<locations.Locations> _lockerData;
+
+  @override
+  void initState() {
+    _lockerData = widget.lockerDataGetter();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -170,13 +217,83 @@ class LockerTabs extends StatelessWidget {
               ],
             ),
           ),
-          body: const TabBarView(
+          body: TabBarView(
             children: [
-              Center(child: Text('Nearby')),
-              Center(child: Text('Recent')),
-              Center(child: Text('Favourites')),
+              FutureBuilder<locations.Locations>(
+                future: _lockerData,
+                builder: (BuildContext context,
+                    AsyncSnapshot<locations.Locations> snapshot) {
+                  if (snapshot.hasData) {
+                    return const Center(
+                        child: Checkbox(value: true, onChanged: null));
+                    // return LockerList(
+                    //   sortMethod: 'Nearby',
+                    //   lockerData: snapshot.data,
+                    // );
+                  } else if (snapshot.hasError) {
+                    return Text("${snapshot.error}");
+                  }
+                  return const Center(child: CircularProgressIndicator());
+                },
+              ),
+              const Center(child: Text('Recent')),
+              const Center(child: Text('Favourites')),
+
+              //   FutureBuilder<LockerList>(
+              //   LockerList(
+              //       sortMethod: 'Recent',
+              //       loadingIndicator: load,
+              //       lockerData: lockers),
+              //   FutureBuilder<LockerList>(
+              //   LockerList(
+              //       sortMethod: 'Favourites',
+              //       loadingIndicator: widget.lockerData,
+              //       lockerData: lockers),
             ],
           ),
         ));
   }
 }
+
+// class LockerList extends StatefulWidget {
+//   LockerList({
+//     Key? key,
+//     required this.sortMethod,
+//     required this.lockerData,
+//   }) : super(key: key);
+//   final String sortMethod;
+//   locations.Locations? lockerData;
+
+//   @override
+//   _lockerListState createState() => _lockerListState();
+// }
+
+// class _lockerListState extends State<LockerList> {
+//   _lockerListState();
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Checkbox();
+//     //  ListView(
+//     //   _onMapCreated;
+//     // );
+//     // // return ListView.builder(
+//     //   itemCount: 10,
+//     //   itemBuilder: (context, index) {
+//     //     return ListTile(
+//     //       title: Text('Locker $index'),
+//     //       onTap: () {
+//     //         Navigator.push(
+//     //           context,
+//     //           MaterialPageRoute(builder: (context) => LockerDetails()),
+//     //         );
+//     //       },
+//     //     );
+//     //   },
+//     // );
+//   }
+//     /*
+//     widget.loadingIndicator().then((widget.lockerData, widget.sortMethod);));
+//     */
+//   }
+
