@@ -152,6 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
               width: 400,
               height: 200,
               child: GoogleMap(
+                myLocationEnabled: true,
                 onMapCreated: _onMapCreated,
                 initialCameraPosition: const CameraPosition(
                   target: LatLng(51.5468, -0.10421),
