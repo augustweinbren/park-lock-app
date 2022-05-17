@@ -4,47 +4,140 @@ import 'dart:math';
 import './locations.dart' as locations;
 import './user.dart' as user_data;
 
-class HireButton extends StatefulWidget {
-  HireButton({
-    Key? key,
-    required this.title,
-    required this.locker,
-  }) : super(key: key);
-  final String title;
-  final locations.Locker locker;
-  @override
-  _HireButtonState createState() => _HireButtonState();
-}
-
-class _HireButtonState extends State<HireButton> {
-  _HireButtonState();
+class HireButton extends StatelessWidget {
+  const HireButton({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton(
-        child: Text(widget.title),
-        onPressed: () => showDialog<String>(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-                  title: Text('Hire a locker at ${widget.locker.name}?'),
-                  content: const Text('This will cost you 1 credit.'),
-                  actions: <Widget>[
-                    TextButton(
-                      child: const Text('Cancel'),
-                      onPressed: () {
-                        Navigator.pop(context, 'false');
-                      },
-                    ),
-                    TextButton(
-                      child: const Text('Hire'),
-                      onPressed: () {
-                        Navigator.pop(context, 'true');
-                      },
-                    ),
-                  ],
-                )));
+    return TextButton(
+      onPressed: () {
+        _confirmHire(context);
+      },
+      child: const Text('Hire Now'),
+    );
+  }
+
+  void _confirmHire(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      // Create the ConfirmScreen
+      MaterialPageRoute(builder: (context) => const ConfirmScreen()),
+    );
   }
 }
+
+class ConfirmScreen extends StatelessWidget {
+  const ConfirmScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Confirm Hire'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, 'Confirm');
+              },
+              child: const Text('Book Locker'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, 'Cancel');
+              },
+              child: const Text('Cancel'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// class _HireButtonState extends State<HireButton> {
+//   _HireButtonState();
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return OutlinedButton(
+//       child: const Text('Hire Now'),
+//       onPressed: () {
+//         _hireNow(context, widget.locker);
+//       },
+//     );
+//   }
+// }
+
+// void _hireNow(BuildContext context, locations.Locker locker) async {
+//   final result = await Navigator.push(
+//     context,
+//     MaterialPageRoute(
+//       builder: (context) => const HireNow(locker),
+//     ),
+//   );
+// }
+
+// class HireNow extends StatefulWidget {
+//   const HireNow(this.locker);
+
+//   final locations.Locker locker;
+// }
+
+// class _HireNowState extends State<HireNow> {
+//   _HireNowState();
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//         appBar: AppBar(title: const Text('Confirm locker hire')),
+//         body: Center(
+//           child: Column(
+//             children: [
+//               TextButton(
+//                 child: const Text('Hire now'),
+//                 onPressed: () {
+//                   _hireNow(context, widget.locker);
+//                 },
+//               ),
+//               TextButton(
+//                 child: const Text('Cancel'),
+//                 onPressed: () {
+//                   _hireNow(context, widget.locker);
+//                 },
+//               ),
+//             ],
+//           ),
+//         ));
+//   }
+// }
+
+
+  // onPressed: () => showDialog<String>(
+  //     context: context,
+  //     builder: (BuildContext context) => AlertDialog(
+  //           title: Text('Hire a locker at ${widget.locker.name}?'),
+  //           content: const Text('This will cost you 1 credit.'),
+  //           actions: <Widget>[
+  //             TextButton(
+  //               child: const Text('Cancel'),
+  //               onPressed: () {
+  //                 Navigator.pop(context, 'false');
+  //               },
+  //             ),
+  //             TextButton(
+  //               child: const Text('Hire'),
+  //               onPressed: () {
+  //                 Navigator.pop(context, 'true');
+  //               },
+  //             ),
+  //           ],
+  //         ))
 
 // void _confirmHire(BuildContext context, locations.Locker locker) async {
 //   final result = await Navigator.push(
