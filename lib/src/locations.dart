@@ -64,7 +64,7 @@ class Locker {
   final double distance_km;
   final String name;
   final int capacity;
-  final int occupancy;
+  int occupancy;
   final String region;
 }
 

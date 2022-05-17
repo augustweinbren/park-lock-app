@@ -3,7 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'src/locations.dart' as locations;
-import 'src/user.dart' as user_data;
+import 'src/hire_now_button.dart' as hireButton;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _onMapCreated(GoogleMapController controller) async {
     final lockers = await locations.getLockers();
     final runIcon = await BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(devicePixelRatio: 1.0),
+      const ImageConfiguration(devicePixelRatio: 1.0),
       'assets/run.png',
     );
     setState(() {
@@ -99,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<locations.Locations> _getLockerData() async {
     while (!dataLoaded) {
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
     }
     return lockersEncapsulated[0];
   }
@@ -129,7 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Text('Username'),
                 )),
             ListTile(
-              title: Text('Account Details'),
+              title: const Text('Account Details'),
               onTap: () {
                 // Update the state of the app
                 // ...
@@ -138,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             ListTile(
-              title: Text('Subscriptions'),
+              title: const Text('Subscriptions'),
               onTap: () {
                 // Update the state of the app
                 // ...
@@ -176,16 +176,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
-// class LockerTabs extends StatelessWidget {
-//   const LockerTabs({Key? key, required this.loadingIndicator, required this.lockerData}) : super(key: key);
-
-//   final void Function() loadingIndicator;
-//   final List<locations.Locations> lockerData;
-
-//   @override
-//   _LockerTabsState createState() => _LockerTabsState();
-// }
 
 class LockerTabs extends StatefulWidget {
   LockerTabs({
@@ -256,27 +246,12 @@ class _LockerTabsState extends State<LockerTabs> {
                       lockerData: snapshot.data!,
                       favoriteLockers: _favoriteLockers,
                     );
-                    // return LockerList(
-                    //   sortMethod: 'Nearby',
-                    //   lockerData: snapshot.data,
-                    // );
                   } else if (snapshot.hasError) {
                     return Text("${snapshot.error}");
                   }
                   return const Center(child: CircularProgressIndicator());
                 },
               ),
-
-              //   FutureBuilder<LockerList>(
-              //   LockerList(
-              //       sortMethod: 'Recent',
-              //       loadingIndicator: load,
-              //       lockerData: lockers),
-              //   FutureBuilder<LockerList>(
-              //   LockerList(
-              //       sortMethod: 'Favourites',
-              //       loadingIndicator: widget.lockerData,
-              //       lockerData: lockers),
             ],
           ),
         ));
@@ -295,11 +270,11 @@ class LockerList extends StatefulWidget {
   final List<locations.Locker> favoriteLockers;
 
   @override
-  _lockerListState createState() => _lockerListState();
+  _LockerListState createState() => _LockerListState();
 }
 
-class _lockerListState extends State<LockerList> {
-  _lockerListState();
+class _LockerListState extends State<LockerList> {
+  _LockerListState();
 
   @override
   Widget build(BuildContext context) {
@@ -309,77 +284,50 @@ class _lockerListState extends State<LockerList> {
     } else if (widget.viewStyle == 'Favourites') {
       lockers = widget.favoriteLockers;
       if (lockers.isEmpty) {
-        return Center(
+        return const Center(
           child: Text('No favourites yet!'),
         );
       }
     }
     lockers.sort((a, b) => a.distance_km.compareTo(b.distance_km));
-    // else if (widget.sortMethod == 'Recent') {
-    //   lockers.sort((a, b) => a.lastUsed.compareTo(b.lastUsed));
-    // } else if (widget.sortMethod == 'Favourites') {
-    //   lockers.sort((a, b) => a.favourite.compareTo(b.favourite));
-    // }
     return ListView.builder(
         itemCount: lockers.length,
         itemBuilder: (BuildContext context, int index) {
           return ListTile(
-              isThreeLine: true,
-              leading: IconButton(
-                icon: Icon(
-                  widget.favoriteLockers.contains(lockers[index])
-                      ? Icons.favorite
-                      : Icons.favorite_border,
-                  color: widget.favoriteLockers.contains(lockers[index])
-                      ? Colors.red
-                      : Colors.black,
-                  semanticLabel: 'Add/Remove Favourite',
-                ),
-                onPressed: () {
-                  setState(() {
-                    if (widget.favoriteLockers.contains(lockers[index])) {
-                      widget.favoriteLockers.remove(lockers[index]);
-                    } else {
-                      widget.favoriteLockers.add(lockers[index]);
-                    }
-                  });
-                },
+            isThreeLine: true,
+            leading: IconButton(
+              icon: Icon(
+                widget.favoriteLockers.contains(lockers[index])
+                    ? Icons.favorite
+                    : Icons.favorite_border,
+                color: widget.favoriteLockers.contains(lockers[index])
+                    ? Colors.red
+                    : Colors.black,
+                semanticLabel: 'Add/Remove Favourite',
               ),
-              title: Text(lockers[index].name),
-              subtitle: Text(lockers[index].distance_km.toStringAsFixed(2) +
-                  ' km away\n' +
-                  (lockers[index].capacity - lockers[index].occupancy)
-                      .toString() +
-                  '/' +
-                  lockers[index].capacity.toString() +
-                  ' lockers available'),
-              trailing: OutlinedButton(
-                onPressed: () {},
-                child: Text('Hire Now'),
-                // alreadySaved ? Icons.favorite : Icons.favorite_border,
-                // color: alreadySaved ? Colors.red : null,
-                // semanticLabel: alreadySaved ? 'Remove from favourites' : 'Add to favourites',
-              ));
+              onPressed: () {
+                setState(() {
+                  if (widget.favoriteLockers.contains(lockers[index])) {
+                    widget.favoriteLockers.remove(lockers[index]);
+                  } else {
+                    widget.favoriteLockers.add(lockers[index]);
+                  }
+                });
+              },
+            ),
+            title: Text(lockers[index].name),
+            subtitle: Text(lockers[index].distance_km.toStringAsFixed(2) +
+                ' km away\n' +
+                (lockers[index].capacity - lockers[index].occupancy)
+                    .toString() +
+                '/' +
+                lockers[index].capacity.toString() +
+                ' lockers available'),
+            trailing: hireButton.HireButton(
+              title: 'Hire Now',
+              locker: lockers[index],
+            ),
+          );
         });
-    //  ListView(
-    //   _onMapCreated;
-    // );
-    // // return ListView.builder(
-    //   itemCount: 10,
-    //   itemBuilder: (context, index) {
-    //     return ListTile(
-    //       title: Text('Locker $index'),
-    //       onTap: () {
-    //         Navigator.push(
-    //           context,
-    //           MaterialPageRoute(builder: (context) => LockerDetails()),
-    //         );
-    //       },
-    //     );
-    //   },
-    // );
   }
-  /*
-    widget.loadingIndicator().then((widget.lockerData, widget.sortMethod);));
-    */
 }
