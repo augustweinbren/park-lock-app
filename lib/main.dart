@@ -183,12 +183,13 @@ class _MyHomePageState extends State<MyHomePage> {
 // }
 
 class LockerTabs extends StatefulWidget {
-  const LockerTabs({
+  LockerTabs({
     Key? key,
     required this.lockerDataGetter,
   }) : super(key: key);
 
   final Function lockerDataGetter;
+  final _saved = <locations.Locations>{};
 
   @override
   State<StatefulWidget> createState() => _LockerTabsState();
@@ -225,8 +226,10 @@ class _LockerTabsState extends State<LockerTabs> {
                 builder: (BuildContext context,
                     AsyncSnapshot<locations.Locations> snapshot) {
                   if (snapshot.hasData) {
-                    return const Center(
-                        child: Checkbox(value: true, onChanged: null));
+                    return LockerList(
+                      sortMethod: 'Nearby',
+                      lockerData: snapshot.data!,
+                    );
                     // return LockerList(
                     //   sortMethod: 'Nearby',
                     //   lockerData: snapshot.data,
@@ -256,45 +259,68 @@ class _LockerTabsState extends State<LockerTabs> {
   }
 }
 
-// class LockerList extends StatefulWidget {
-//   LockerList({
-//     Key? key,
-//     required this.sortMethod,
-//     required this.lockerData,
-//   }) : super(key: key);
-//   final String sortMethod;
-//   locations.Locations? lockerData;
+class LockerList extends StatefulWidget {
+  LockerList({
+    Key? key,
+    required this.sortMethod,
+    required this.lockerData,
+  }) : super(key: key);
+  final String sortMethod;
+  locations.Locations lockerData;
 
-//   @override
-//   _lockerListState createState() => _lockerListState();
-// }
+  @override
+  _lockerListState createState() => _lockerListState();
+}
 
-// class _lockerListState extends State<LockerList> {
-//   _lockerListState();
+class _lockerListState extends State<LockerList> {
+  _lockerListState();
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Checkbox();
-//     //  ListView(
-//     //   _onMapCreated;
-//     // );
-//     // // return ListView.builder(
-//     //   itemCount: 10,
-//     //   itemBuilder: (context, index) {
-//     //     return ListTile(
-//     //       title: Text('Locker $index'),
-//     //       onTap: () {
-//     //         Navigator.push(
-//     //           context,
-//     //           MaterialPageRoute(builder: (context) => LockerDetails()),
-//     //         );
-//     //       },
-//     //     );
-//     //   },
-//     // );
-//   }
-//     /*
-//     widget.loadingIndicator().then((widget.lockerData, widget.sortMethod);));
-//     */
-//   }
-
+  @override
+  Widget build(BuildContext context) {
+    List<locations.Locker> lockers = widget.lockerData.lockers;
+    if (widget.sortMethod == 'Nearby') {
+      lockers.sort((a, b) => a.distance_km.compareTo(b.distance_km));
+    }
+    // else if (widget.sortMethod == 'Recent') {
+    //   lockers.sort((a, b) => a.lastUsed.compareTo(b.lastUsed));
+    // } else if (widget.sortMethod == 'Favourites') {
+    //   lockers.sort((a, b) => a.favourite.compareTo(b.favourite));
+    // }
+    return ListView.builder(
+        itemCount: lockers.length,
+        itemBuilder: (BuildContext context, int index) {
+          return ListTile(
+            leading: const Icon(Icons.run_circle),
+            title: Text(lockers[index].name),
+            subtitle: Text((lockers[index].capacity - lockers[index].occupancy)
+                    .toString() +
+                '/' +
+                lockers[index].capacity.toString()),
+            trailing: Text(lockers[index].distance_km.toString() + 'km'),
+            // alreadySaved ? Icons.favorite : Icons.favorite_border,
+            // color: alreadySaved ? Colors.red : null,
+            // semanticLabel: alreadySaved ? 'Remove from favourites' : 'Add to favourites',
+          );
+        });
+    //  ListView(
+    //   _onMapCreated;
+    // );
+    // // return ListView.builder(
+    //   itemCount: 10,
+    //   itemBuilder: (context, index) {
+    //     return ListTile(
+    //       title: Text('Locker $index'),
+    //       onTap: () {
+    //         Navigator.push(
+    //           context,
+    //           MaterialPageRoute(builder: (context) => LockerDetails()),
+    //         );
+    //       },
+    //     );
+    //   },
+    // );
+  }
+  /*
+    widget.loadingIndicator().then((widget.lockerData, widget.sortMethod);));
+    */
+}
