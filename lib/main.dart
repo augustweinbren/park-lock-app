@@ -67,6 +67,10 @@ class _MyHomePageState extends State<MyHomePage> {
 */
   Future<void> _onMapCreated(GoogleMapController controller) async {
     final lockers = await locations.getLockers();
+    final runIcon = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration(devicePixelRatio: 1.0),
+      'assets/run.png',
+    );
     setState(() {
       lockersEncapsulated.clear();
       lockersEncapsulated.add(lockers);
@@ -85,6 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 '/' +
                 locker.capacity.toString(),
           ),
+          icon: runIcon,
         );
         _markers[locker.id] = marker;
       }
@@ -162,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
               )),
           SizedBox(
               width: 400,
-              height: 190,
+              height: 390,
               child: LockerTabs(
                 lockerDataGetter: _getLockerData,
               )),
@@ -207,14 +212,13 @@ class _LockerTabsState extends State<LockerTabs> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 3,
+        length: 2,
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: 0,
             bottom: const TabBar(
               tabs: [
                 Tab(text: "Nearby"),
-                Tab(text: "Recent"),
                 Tab(text: "Favourites"),
               ],
             ),
@@ -240,8 +244,7 @@ class _LockerTabsState extends State<LockerTabs> {
                   return const Center(child: CircularProgressIndicator());
                 },
               ),
-              const Center(child: Text('Recent')),
-              const Center(child: Text('Favourites')),
+              Center(child: Text('Favourites')),
 
               //   FutureBuilder<LockerList>(
               //   LockerList(
@@ -290,13 +293,17 @@ class _lockerListState extends State<LockerList> {
         itemCount: lockers.length,
         itemBuilder: (BuildContext context, int index) {
           return ListTile(
-            leading: const Icon(Icons.run_circle),
+            leading: const Icon(
+              Icons.run_circle,
+              color: Colors.blue,
+            ),
             title: Text(lockers[index].name),
             subtitle: Text((lockers[index].capacity - lockers[index].occupancy)
                     .toString() +
                 '/' +
-                lockers[index].capacity.toString()),
-            trailing: Text(lockers[index].distance_km.toString() + 'km'),
+                lockers[index].capacity.toString() +
+                ' lockers available'),
+            trailing: Text(lockers[index].distance_km.toString() + ' km away'),
             // alreadySaved ? Icons.favorite : Icons.favorite_border,
             // color: alreadySaved ? Colors.red : null,
             // semanticLabel: alreadySaved ? 'Remove from favourites' : 'Add to favourites',
