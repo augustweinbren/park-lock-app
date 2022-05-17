@@ -308,6 +308,11 @@ class _lockerListState extends State<LockerList> {
       lockers = widget.lockerData.lockers;
     } else if (widget.viewStyle == 'Favourites') {
       lockers = widget.favoriteLockers;
+      if (lockers.isEmpty) {
+        return Center(
+          child: Text('No favourites yet!'),
+        );
+      }
     }
     lockers.sort((a, b) => a.distance_km.compareTo(b.distance_km));
     // else if (widget.sortMethod == 'Recent') {
