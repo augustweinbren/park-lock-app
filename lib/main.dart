@@ -155,7 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 myLocationEnabled: true,
                 onMapCreated: _onMapCreated,
                 initialCameraPosition: const CameraPosition(
-                  target: LatLng(51.5468, -0.10421),
+                  target: LatLng(51.52190447705794, -0.1360255301256914),
                   zoom: 11.0,
                 ),
                 markers: _markers.values.toSet(),
