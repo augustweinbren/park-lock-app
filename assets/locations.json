@@ -3,7 +3,7 @@
         "image": "https://lh3.googleusercontent.com/WTxWzt3AOcEMwoT2OonLTlc63pa4V-GsYbZg5Hu7rfe9ZioMaRurkxaQ5tOcuC9nZkCyh2IjQb-xMy4Tq8ISrHjfDHmzZXnExTjP",
         "lat": 51.53042, "lng": -0.14632, "distance_km": 1.81, "name": "Regent's Park", "capacity": 25, "occupancy": 22, "region": "europe"},
     {"address": "Olympic Park\nLondon E20 2ST\nUnited Kingdom", "id": "london-oly", "image": "https://lh3.googleusercontent.com/bLxZNCaDE2Fdj7woV_9JUJEUfUvTrhI57jHNEeW-OenTspzM21miwz1gGydzZ2Ke_vfRdkqdo4dyN2mJCntC2p4qvRUyipPWppAC9g", 
-        "lat": 51.53795103466903, "lng": -0.01462309363907473, "distance_km": 8.40, "name": "QEOP", "capacity": 20, "occupancy": 15, "region": "europe"},
+        "lat": 51.53795103466903, "lng": -0.01462309363907473, "distance_km": 8.40, "name": "Queen Elizabeth Olympic Park", "capacity": 20, "occupancy": 15, "region": "europe"},
     {"address": "Battersea Park\nLondon SW11 4NJ\nUnited Kingdom", "id": "london-bat", "image": "https://lh3.googleusercontent.com/bLxZNCaDE2Fdj7woV_9JUJEUfUvTrhI57jHNEeW-OenTspzM21miwz1gGydzZ2Ke_vfRdkqdo4dyN2mJCntC2p4qvRUyipPWppAC9g", 
         "lat": 51.47823213989096, "lng" :-0.15893354744496418, "distance_km": 4.88, "name": "Battersea Park", "capacity": 20, "occupancy": 15, "region": "europe"},
     {"address": "Clapham Common\nLondon SW4 9DE\nUnited Kingdom", "id": "london-clap", "image": "https://lh3.googleusercontent.com/bLxZNCaDE2Fdj7woV_9JUJEUfUvTrhI57jHNEeW-OenTspzM21miwz1gGydzZ2Ke_vfRdkqdo4dyN2mJCntC2p4qvRUyipPWppAC9g",
