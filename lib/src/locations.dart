@@ -46,6 +46,7 @@ class Locker {
     required this.image,
     required this.lat,
     required this.lng,
+    required this.distance_km,
     required this.name,
     required this.capacity,
     required this.occupancy,
@@ -60,6 +61,7 @@ class Locker {
   final String image;
   final double lat;
   final double lng;
+  final double distance_km;
   final String name;
   final int capacity;
   final int occupancy;
@@ -77,6 +79,10 @@ class Locations {
   Map<String, dynamic> toJson() => _$LocationsToJson(this);
 
   final List<Locker> lockers;
+
+  int length() {
+    return lockers.length;
+  }
 }
 
 Future<Locations> getLockers() async {
