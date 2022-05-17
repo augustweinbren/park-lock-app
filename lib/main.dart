@@ -202,6 +202,7 @@ class LockerTabs extends StatefulWidget {
 
 class _LockerTabsState extends State<LockerTabs> {
   late Future<locations.Locations> _lockerData;
+  final List<locations.Locker> _favoriteLockers = [];
 
   @override
   void initState() {
@@ -231,8 +232,9 @@ class _LockerTabsState extends State<LockerTabs> {
                     AsyncSnapshot<locations.Locations> snapshot) {
                   if (snapshot.hasData) {
                     return LockerList(
-                      sortMethod: 'Nearby',
+                      viewStyle: 'Nearby',
                       lockerData: snapshot.data!,
+                      favoriteLockers: _favoriteLockers,
                     );
                     // return LockerList(
                     //   sortMethod: 'Nearby',
@@ -244,7 +246,26 @@ class _LockerTabsState extends State<LockerTabs> {
                   return const Center(child: CircularProgressIndicator());
                 },
               ),
-              Center(child: Text('Favourites')),
+              FutureBuilder<locations.Locations>(
+                future: _lockerData,
+                builder: (BuildContext context,
+                    AsyncSnapshot<locations.Locations> snapshot) {
+                  if (snapshot.hasData) {
+                    return LockerList(
+                      viewStyle: 'Favourites',
+                      lockerData: snapshot.data!,
+                      favoriteLockers: _favoriteLockers,
+                    );
+                    // return LockerList(
+                    //   sortMethod: 'Nearby',
+                    //   lockerData: snapshot.data,
+                    // );
+                  } else if (snapshot.hasError) {
+                    return Text("${snapshot.error}");
+                  }
+                  return const Center(child: CircularProgressIndicator());
+                },
+              ),
 
               //   FutureBuilder<LockerList>(
               //   LockerList(
@@ -265,11 +286,13 @@ class _LockerTabsState extends State<LockerTabs> {
 class LockerList extends StatefulWidget {
   LockerList({
     Key? key,
-    required this.sortMethod,
+    required this.viewStyle,
     required this.lockerData,
+    required this.favoriteLockers,
   }) : super(key: key);
-  final String sortMethod;
-  locations.Locations lockerData;
+  final String viewStyle;
+  final locations.Locations lockerData;
+  final List<locations.Locker> favoriteLockers;
 
   @override
   _lockerListState createState() => _lockerListState();
@@ -280,10 +303,13 @@ class _lockerListState extends State<LockerList> {
 
   @override
   Widget build(BuildContext context) {
-    List<locations.Locker> lockers = widget.lockerData.lockers;
-    if (widget.sortMethod == 'Nearby') {
-      lockers.sort((a, b) => a.distance_km.compareTo(b.distance_km));
+    List<locations.Locker> lockers = [];
+    if (widget.viewStyle == 'Nearby') {
+      lockers = widget.lockerData.lockers;
+    } else if (widget.viewStyle == 'Favourites') {
+      lockers = widget.favoriteLockers;
     }
+    lockers.sort((a, b) => a.distance_km.compareTo(b.distance_km));
     // else if (widget.sortMethod == 'Recent') {
     //   lockers.sort((a, b) => a.lastUsed.compareTo(b.lastUsed));
     // } else if (widget.sortMethod == 'Favourites') {
@@ -293,21 +319,42 @@ class _lockerListState extends State<LockerList> {
         itemCount: lockers.length,
         itemBuilder: (BuildContext context, int index) {
           return ListTile(
-            leading: const Icon(
-              Icons.run_circle,
-              color: Colors.blue,
-            ),
-            title: Text(lockers[index].name),
-            subtitle: Text((lockers[index].capacity - lockers[index].occupancy)
-                    .toString() +
-                '/' +
-                lockers[index].capacity.toString() +
-                ' lockers available'),
-            trailing: Text(lockers[index].distance_km.toString() + ' km away'),
-            // alreadySaved ? Icons.favorite : Icons.favorite_border,
-            // color: alreadySaved ? Colors.red : null,
-            // semanticLabel: alreadySaved ? 'Remove from favourites' : 'Add to favourites',
-          );
+              isThreeLine: true,
+              leading: IconButton(
+                icon: Icon(
+                  widget.favoriteLockers.contains(lockers[index])
+                      ? Icons.favorite
+                      : Icons.favorite_border,
+                  color: widget.favoriteLockers.contains(lockers[index])
+                      ? Colors.red
+                      : Colors.black,
+                  semanticLabel: 'Add/Remove Favourite',
+                ),
+                onPressed: () {
+                  setState(() {
+                    if (widget.favoriteLockers.contains(lockers[index])) {
+                      widget.favoriteLockers.remove(lockers[index]);
+                    } else {
+                      widget.favoriteLockers.add(lockers[index]);
+                    }
+                  });
+                },
+              ),
+              title: Text(lockers[index].name),
+              subtitle: Text(lockers[index].distance_km.toStringAsFixed(2) +
+                  ' km away\n' +
+                  (lockers[index].capacity - lockers[index].occupancy)
+                      .toString() +
+                  '/' +
+                  lockers[index].capacity.toString() +
+                  ' lockers available'),
+              trailing: OutlinedButton(
+                onPressed: () {},
+                child: Text('Hire Now'),
+                // alreadySaved ? Icons.favorite : Icons.favorite_border,
+                // color: alreadySaved ? Colors.red : null,
+                // semanticLabel: alreadySaved ? 'Remove from favourites' : 'Add to favourites',
+              ));
         });
     //  ListView(
     //   _onMapCreated;
