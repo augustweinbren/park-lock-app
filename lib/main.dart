@@ -41,14 +41,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+// The main page of the ParkLock app. Includes a drawer, map, and tab bar view.
 
   final String title;
 
@@ -59,14 +52,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final Map<String, Marker> _markers = {};
   final List<locations.Locations> lockersEncapsulated = [];
-  final List<int> credits = [0];
+  final List<int> credits = [0]; // Current mocked data for user's credits
   bool dataLoaded = false;
-  /* final List<user_data.User> _users = [];*/
-  // List of users for making data input easier. Only one user is needed for now.
-/* \todo: Figure out how to incorporate user code
-  final user_data.User _userData = user_data.User();
-  final user = await user_data.getUser();
-*/
   Future<void> _onMapCreated(GoogleMapController controller) async {
     final lockers = await locations.getLockers();
     final runIcon = await BitmapDescriptor.fromAssetImage(
@@ -122,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       drawer: Drawer(
-        // This is the main drawer, used to hold user details
+        // This is the main drawer, used to buy credits right now
         child: ListView(
           children: <Widget>[
             const SizedBox(
@@ -141,6 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 // Update the state of the app
               },
             ),
+            // TODO: need to get this working properly
             // ListTile(
             //   title: Text('Credits: ${credits[0]}'),
             //   onTap: () {
@@ -179,6 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class LockerTabs extends StatefulWidget {
+  // This widget is the tab bar view, which holds the two lists of lockers
   LockerTabs({
     Key? key,
     required this.lockerDataGetter,
@@ -219,6 +208,7 @@ class _LockerTabsState extends State<LockerTabs> {
           ),
           body: TabBarView(
             children: [
+              // The TabBarView needs to wait until the data is loaded
               FutureBuilder<locations.Locations>(
                 future: _lockerData,
                 builder: (BuildContext context,
@@ -230,10 +220,6 @@ class _LockerTabsState extends State<LockerTabs> {
                       favoriteLockers: _favoriteLockers,
                       credits: widget.credits,
                     );
-                    // return LockerList(
-                    //   sortMethod: 'Nearby',
-                    //   lockerData: snapshot.data,
-                    // );
                   } else if (snapshot.hasError) {
                     return Text("${snapshot.error}");
                   }
@@ -366,11 +352,6 @@ class _LockerListState extends State<LockerList> {
                     child: const Text('Full',
                         style: TextStyle(color: Colors.black))));
       },
-      // trailing: hireButton.HireButton(
-      //   title: 'Hire Now',
-      //   locker: lockers[index],
-
-      // ),
     );
   }
 }

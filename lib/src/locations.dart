@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 // This defines how the Locations class will look like in the JSON file.
+// Many fields are not yet in use.
 
 part 'locations.g.dart';
 

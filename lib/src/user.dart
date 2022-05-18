@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter/services.dart' show rootBundle;
-// This defines how the user data should be formatted.
+// This defines how the user data should be formatted. Many fields are not yet in use.
 
 part 'user.g.dart';
 

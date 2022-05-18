@@ -4,6 +4,8 @@ import 'dart:math';
 import './locations.dart' as locations;
 import './user.dart' as user_data;
 
+// Note: this code is WIP and not currently in use.
+
 class HireButton extends StatelessWidget {
   const HireButton({Key? key}) : super(key: key);
 
