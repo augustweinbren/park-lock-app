@@ -19,7 +19,7 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
   Map<String, dynamic> toJson() => _$UserToJson(this);
 
-  final int credits;
+  int credits;
   final String name;
   final String id;
   final String email;

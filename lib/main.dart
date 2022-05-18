@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'src/locations.dart' as locations;
+import 'src/user.dart' as user_data;
 import 'src/hire_now_button.dart' as hireButton;
 
 void main() async {
@@ -58,6 +59,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final Map<String, Marker> _markers = {};
   final List<locations.Locations> lockersEncapsulated = [];
+  final List<int> credits = [0];
   bool dataLoaded = false;
   /* final List<user_data.User> _users = [];*/
   // List of users for making data input easier. Only one user is needed for now.
@@ -126,26 +128,26 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(
                 height: 50.0,
                 child: DrawerHeader(
-                  child: Text('Username'),
+                  child: Text("John Doe"),
                 )),
             ListTile(
-              title: const Text('Account Details'),
+              title: const Text('Get 5 free credits'),
               onTap: () {
+                setState(
+                  () {
+                    credits[0] += 5;
+                  },
+                );
                 // Update the state of the app
-                // ...
-                // Then close the drawer
-                Navigator.pop(context);
               },
             ),
-            ListTile(
-              title: const Text('Subscriptions'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                Navigator.pop(context);
-              },
-            ),
+            // ListTile(
+            //   title: Text('Credits: ${credits[0]}'),
+            //   onTap: () {
+            //     // close the drawer
+            //     Navigator.pop(context);
+            //   },
+            // ),
           ],
         ),
       ),
@@ -169,8 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
               width: 400,
               height: 390,
               child: LockerTabs(
-                lockerDataGetter: _getLockerData,
-              )),
+                  lockerDataGetter: _getLockerData, credits: credits)),
         ],
       ),
     );
@@ -181,10 +182,12 @@ class LockerTabs extends StatefulWidget {
   LockerTabs({
     Key? key,
     required this.lockerDataGetter,
+    required this.credits,
   }) : super(key: key);
 
   final Function lockerDataGetter;
   final _saved = <locations.Locations>{};
+  final List<int> credits;
 
   @override
   State<StatefulWidget> createState() => _LockerTabsState();
@@ -225,6 +228,7 @@ class _LockerTabsState extends State<LockerTabs> {
                       viewStyle: 'Nearby',
                       lockerData: snapshot.data!,
                       favoriteLockers: _favoriteLockers,
+                      credits: widget.credits,
                     );
                     // return LockerList(
                     //   sortMethod: 'Nearby',
@@ -245,6 +249,7 @@ class _LockerTabsState extends State<LockerTabs> {
                       viewStyle: 'Favourites',
                       lockerData: snapshot.data!,
                       favoriteLockers: _favoriteLockers,
+                      credits: widget.credits,
                     );
                   } else if (snapshot.hasError) {
                     return Text("${snapshot.error}");
@@ -264,10 +269,12 @@ class LockerList extends StatefulWidget {
     required this.viewStyle,
     required this.lockerData,
     required this.favoriteLockers,
+    required this.credits,
   }) : super(key: key);
   final String viewStyle;
   final locations.Locations lockerData;
   final List<locations.Locker> favoriteLockers;
+  final List<int> credits;
 
   @override
   _LockerListState createState() => _LockerListState();
@@ -291,9 +298,9 @@ class _LockerListState extends State<LockerList> {
     }
     lockers.sort((a, b) => a.distance_km.compareTo(b.distance_km));
     return ListView.builder(
-        itemCount: lockers.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
+      itemCount: lockers.length,
+      itemBuilder: (BuildContext context, int index) {
+        return ListTile(
             isThreeLine: true,
             leading: IconButton(
               icon: Icon(
@@ -323,11 +330,47 @@ class _LockerListState extends State<LockerList> {
                 '/' +
                 lockers[index].capacity.toString() +
                 ' lockers available'),
-            trailing: hireButton.HireButton(
-              title: 'Hire Now',
-              locker: lockers[index],
-            ),
-          );
-        });
+            trailing: lockers[index].capacity - lockers[index].occupancy > 0
+                ? TextButton(
+                    onPressed: () {
+                      if (widget.credits[0] != 0) {
+                        setState(() {
+                          lockers[index].occupancy++;
+                          widget.credits[0]--;
+                        });
+                      } else {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('No credits left!'),
+                                content: const Text(
+                                    'You have no credits left to book a locker.' +
+                                        '\nPlease purchase more credits from the sidebar.'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: const Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
+                      }
+                    },
+                    child: const Text('Book'),
+                  )
+                : TextButton(
+                    onPressed: () {},
+                    child: const Text('Full',
+                        style: TextStyle(color: Colors.black))));
+      },
+      // trailing: hireButton.HireButton(
+      //   title: 'Hire Now',
+      //   locker: lockers[index],
+
+      // ),
+    );
   }
 }
